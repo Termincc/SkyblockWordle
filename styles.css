@@ -81,6 +81,16 @@
     gap: .25em;
     margin-bottom: 1em;
   }
+  .setWordGrid {
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    flex-grow: 1;
+    grid-template-columns: repeat(5, 4em);
+    grid-template-rows: repeat(1, 4em);
+    gap: .25em;
+    margin-bottom: 1em;
+  }
   
   .tile {
     font-size: 2em;
@@ -188,7 +198,6 @@
     flex-direction: column;
     align-items: center;
   }
-  
   .alert {
     pointer-events: none;
     background-color: hsl(204, 7%, 85%);
@@ -205,4 +214,14 @@
   
   .alert.hide {
     opacity: 0;
+  }
+  .setWord {
+    background-color: hsl(240, 2%, 19%);
+    transition: opacity 500ms ease-in-out;
+    padding: .75em;
+    border-radius: 1em;
+    opacity: 1;
+    margin-bottom: .5em;
+    width: 500px;
+    height: 200px;
   }

@@ -8,6 +8,7 @@ const offsetFromDate = new Date(2022, 0, 1)
 const msOffset = Date.now() - offsetFromDate
 const dayOffset = msOffset / 1000 / 60 / 60 / 24
 var targetWord = targetWords[Math.floor(Math.random()*targetWords.length)]
+var isSetWord = false
 
 startInteraction()
 
@@ -40,6 +41,10 @@ function handleMouseClick(e) {
 
 function handleKeyPress(e) {
   if (e.key === "Enter") {
+    if (isSetWord == true) {
+      setWordEnter()
+      return
+    }
     submitGuess()
     return
   }
@@ -84,20 +89,103 @@ function handleKeyPress(e) {
     enterLetters(5)
   }
   if (e.key === "Delete") {
+    if (isSetWord == true) {
+      setWordDeleteAll()
+      return
+    }
     deleteall()
   }
   if (e.key === "Backspace") {
+    if (isSetWord == true) {
+      setWorddeleteKey()
+      return
+    }
     deleteKey()
     return 
   }
   if (e.key.match(/^[a-z]$/)) {
+    if (isSetWord == true) {
+      setWordPressKey(e.key)
+      return
+    }
     pressKey(e.key)
     return
   }
   if (e.key === "F") {
     setWord()
+    return
+  }
+  if (e.key === "G") {
+    isSetWord = true
+    wordSelect()
+    return
   }
 }
+function setWordPressKey(key) {
+  const activeTiles = getActiveTilesSW()
+  if (activeTiles.length >= WORD_LENGTH) return
+  const setWordGrid = document.querySelector("[data-enter-grid")
+  const nextTile = setWordGrid.querySelector(":not([data-letter])")
+  nextTile.dataset.letter = key.toLowerCase()
+  nextTile.textContent = key
+  nextTile.dataset.state = "active"
+}
+function setWorddeleteKey() {
+  const activeTiles = getActiveTilesSW()
+  const lastTile = activeTiles[activeTiles.length - 1]
+  if (lastTile == null) return
+  lastTile.textContent = ""
+  delete lastTile.dataset.state
+  delete lastTile.dataset.letter
+}
+function setWordDeleteAll() {
+  for (let f = 0; f<5; f++) {
+    const activeTiles = getActiveTilesSW()
+    const lastTile = activeTiles[activeTiles.length - 1]
+    if (lastTile == null) return
+    lastTile.textContent = ""
+    delete lastTile.dataset.state
+    delete lastTile.dataset.letter
+  }
+}
+function getActiveTilesSW() {
+  const setWordGrid = document.querySelector("[data-enter-grid")
+  return setWordGrid.querySelectorAll('[data-state="active"]')
+}
+function wordSelect() {
+  const alert = document.createElement("div")
+  alert.classList.add("setWord")
+  alert.id = "setWordContainer"
+  alert.textContent = "Hi"
+  alertContainer.prepend(alert)
+  document.getElementById("setWordContainer").innerHTML = '<div data-enter-grid class="setWordGrid"><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div></div>'
+  alert.id = ("SWAlert")
+  return
+}
+function setWordEnter() {
+  const activeTiles = [...getActiveTilesSW()]
+  if (activeTiles.length !== WORD_LENGTH) {
+    showAlert("Not enough letters")
+    shakeTiles(activeTiles)
+    return
+  }
+
+  const guess = activeTiles.reduce((word, tile) => {
+    return word + tile.dataset.letter
+  }, "")
+
+  if (targetWords.includes(guess)) {
+    targetWord = guess
+    const SWAlert = document.getElementById("SWAlert")
+    SWAlert.remove()
+    isSetWord = false
+  } else {
+    showAlert("Not in word list")
+    shakeTiles(activeTiles)
+    return
+  }
+}
+
 function setWord() {
   const activeTiles = getActiveTiles()
   if (activeTiles.length == 5) {
