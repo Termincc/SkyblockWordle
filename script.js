@@ -24,16 +24,28 @@ function stopInteraction() {
 
 function handleMouseClick(e) {
   if (e.target.matches("[data-key]")) {
+    if (isSetWord == true) {
+      setWordPressKey(e.target.dataset.key)
+      return
+    }
     pressKey(e.target.dataset.key)
     return
   }
 
   if (e.target.matches("[data-enter]")) {
+    if (isSetWord == true) {
+      setWordEnter()
+      return
+    }
     submitGuess()
     return
   }
 
-  if (e.target.matches("[data-delete]")) {
+  if (e.target.matches("[data-del]")) {
+    if (isSetWord == true) {
+      setWorddeleteKey()
+      return
+    }
     deleteKey()
     return
   }
@@ -111,11 +123,10 @@ function handleKeyPress(e) {
     pressKey(e.key)
     return
   }
-  if (e.key === "F") {
-    setWord()
-    return
-  }
   if (e.key === "G") {
+    if (isSetWord == true) return
+    const deleteafterlol = document.getElementById("SW")
+    deleteafterlol.remove()
     isSetWord = true
     wordSelect()
     return
@@ -174,7 +185,7 @@ function setWordEnter() {
     return word + tile.dataset.letter
   }, "")
 
-  if (targetWords.includes(guess)) {
+  if (dictionary.includes(guess)) {
     targetWord = guess
     const SWAlert = document.getElementById("SWAlert")
     SWAlert.remove()
@@ -184,24 +195,7 @@ function setWordEnter() {
     shakeTiles(activeTiles)
     return
   }
-}
-
-function setWord() {
-  const activeTiles = getActiveTiles()
-  if (activeTiles.length == 5) {
-    let newWord = ""
-    for (let o = 0; o<5; o++) {
-      newWord += activeTiles[o].dataset.letter
-    }
-    if (!dictionary.includes(newWord)) {
-      showAlert("Not in word list")
-    } else {
-      targetWord = newWord
-      deleteall()
-    }
-  } else {
-    showAlert("Not 5 Letters!")
-  }
+  deleteall()
 }
 function getWordList() {
   let getWordList = []
@@ -250,6 +244,13 @@ function winLmao() {
 }
 
 function pressKey(key) {
+  if (key == "SW") {
+    wordSelect()
+    isSetWord = true
+    const deleteafter = document.getElementById("SW")
+    deleteafter.remove()
+    return
+  }
   const activeTiles = getActiveTiles()
   if (activeTiles.length >= WORD_LENGTH) return
   const nextTile = guessGrid.querySelector(":not([data-letter])")
